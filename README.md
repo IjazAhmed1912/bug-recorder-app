@@ -1,133 +1,156 @@
 # TraceFlow
 
-**TraceFlow** helps teams file bugs with enough context to reproduce them: structured steps, automatic environment metadata, screenshots, optional click traces, and a one-click **Markdown** handoff for Slack, Jira, or email.
+TraceFlow is a web app for **filing and managing bug reports**. Reporters sign in, create issues with reproduction steps, and can attach screenshots, optional click recordings, and automatically captured **environment** data (URL, viewport, language, time zone, platform, user agent). The inbox supports **search** (title, steps, tags, external links), **filters**, **CSV export**, and each issue can be copied as **Markdown** for tools like Jira, GitHub, or Slack.
 
-### For GitHub (quick read)
+---
 
-- **What it is:** A signed-in **inbox** for bug reports—steps, tags, optional external links, screenshots, optional click recording, captured **environment** (URL, viewport, UA, …), search/filter, **CSV** export, and **Copy as Markdown**.
-- **Run it:** Node 20+, a Firebase project, then **[Getting started](#getting-started)** (`npm install`, copy `.env.example` → `.env.local`, `npm run dev`).
+## Contents
 
-Tip: add a **screenshot or GIF** near the top of this file on GitHub (drag-and-drop in the README editor) so visitors see the UI immediately.
+- [Features](#features)
+- [Tech stack](#tech-stack)
+- [Local setup](#local-setup)
+- [Firebase rules](#firebase-rules)
+- [Scripts](#scripts)
+- [Build and hosting](#build-and-hosting)
+- [Project layout](#project-layout)
+- [Markdown export](#markdown-export)
+- [License](#license)
+
+---
+
+## Features
+
+| | |
+|:---|:---|
+| **Inbox** | List, search, and filter issues; export the current view to CSV. |
+| **New issue** | Steps, tags, optional external link, screenshots, optional recording; session **client errors** can be captured while filing. |
+| **Issue detail** | Status, priority, assignee, tags, link, comments; **Copy as Markdown**. |
+| **Theme** | Light / dark. Data access is limited to the signed-in user via Firestore and Storage rules. |
 
 ---
 
 ## Tech stack
 
-| Layer | Choice |
-|--------|--------|
-| UI | React 19, TypeScript, Vite |
-| Styling | Tailwind CSS, Framer Motion |
+| Layer | Details |
+|--------|---------|
+| Frontend | React 19, TypeScript, Vite |
+| UI | Tailwind CSS, Framer Motion |
 | State | Zustand |
 | Backend | Firebase Authentication, Cloud Firestore, Cloud Storage |
+| Tests | Vitest (helpers for search, tags, CSV, etc.) |
 
 ---
 
-## What you can do
+## Local setup
 
-- Sign in and manage **issues** in a single inbox (title, steps, **tags**, optional **link elsewhere**, priority, status, assignee, comments).
-- **Search** across title, steps, tags, and external links; **filter by tag**; **export CSV** for the issues currently shown in the inbox.
-- On **New issue**, capture **screenshots**, optional **click recording**, and (while that tab is open) **browser errors** to attach to the report.
-- At create time, **environment** is saved automatically: URL, viewport, language, time zone, platform, user agent.
-- On **Issue detail**, review everything in one place and use **Copy as Markdown** to paste into another tool.
-- Switch **light / dark** theme; data access is limited to the signed-in reporter via security rules.
+**Prerequisites**
 
----
-
-## Markdown export (where it lives)
-
-There is **no separate Markdown file per issue** in the repo. Export text is **built in code** when you need it:
-
-| What | Where |
-|------|--------|
-| **Generator** | [`src/utils/issueMarkdown.ts`](src/utils/issueMarkdown.ts) — `buildIssueMarkdown(issue)` returns a string (headings, lists, links to screenshots). |
-| **In the UI** | Open any issue (**Issue detail**). In the **top bar**, click **Copy as Markdown**. That copies the generated string to your clipboard. |
-
-So: **Markdown = runtime output**, same idea as “Export as…” in other apps. To change the format, edit `issueMarkdown.ts`.
-
----
-
-## Getting started
-
-### Requirements
-
-- [Node.js](https://nodejs.org/) 20+ (or current LTS)
+- [Node.js](https://nodejs.org/) **20+**
 - A [Firebase](https://console.firebase.google.com/) project with **Authentication**, **Cloud Firestore**, and **Cloud Storage**
+- A Firebase **web app** registered in that project (you need the config keys for `.env.local`)
 
-### Install and run
+**Install and run**
 
-```bash
-git clone <your-repo-url>
-cd bug-recorder-app
-npm install
-cp .env.example .env.local
-```
+1. Clone and install dependencies:
 
-Add your Firebase web app keys to `.env.local` (see `.env.example`). For local development, empty `VITE_*` values fall back to defaults in `src/firebase/config.ts`; use **your own** project for anything public or production.
+   ```bash
+   git clone <your-repo-url>
+   cd bug-recorder-app
+   npm install
+   ```
 
-```bash
-npm run dev
-```
+2. Create your env file and add keys:
 
-Then open the printed URL (typically `http://localhost:5173`).
+   ```bash
+   cp .env.example .env.local
+   ```
 
-### Firebase setup (short checklist)
+   Edit `.env.local` and set the `VITE_*` variables as described in `.env.example`. For local-only hacking, empty values may fall back via `src/firebase/config.ts`; for any shared or production deployment, use **your own** Firebase project and real keys.
 
-1. **Authentication** — Enable the providers you want (Email, Google, GitHub).
-2. **Firestore** — Create a database; then deploy the rules in this repo (`firestore.rules`).
-3. **Storage** — Enable it; then deploy `storage.rules`.
+3. In the Firebase console, enable at least one **Authentication** provider, create a **Firestore** database, and enable **Storage**.
 
-With the [Firebase CLI](https://firebase.google.com/docs/cli):
+4. Deploy security rules (see [Firebase rules](#firebase-rules) below).
+
+5. Start the app:
+
+   ```bash
+   npm run dev
+   ```
+
+6. Open the URL from the terminal (typically `http://localhost:5173`), sign up or sign in, and create a test issue.
+
+---
+
+## Firebase rules
+
+This repository includes `firestore.rules` and `storage.rules` so users only read and write their own data.
+
+Install the [Firebase CLI](https://firebase.google.com/docs/cli), then from the project root:
 
 ```bash
 firebase deploy --only firestore:rules,storage
 ```
 
-**Rule of thumb:** Each issue document must include **`userUid`** matching the signed-in user. Older documents **without** `userUid` will be rejected by the current rules until you migrate or remove them.
+Each issue document is expected to include **`userUid`** matching the signed-in user. Older or manual documents **without** `userUid` may be rejected until updated or removed.
 
-### Build and preview
+---
+
+## Scripts
+
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Development server (Vite) |
+| `npm run build` | Typecheck + production build |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | ESLint |
+| `npm test` | Run Vitest once |
+| `npm run test:watch` | Vitest in watch mode |
+
+---
+
+## Build and hosting
+
+**Preview a production build**
 
 ```bash
 npm run build
 npm run preview
 ```
 
-### Deploying under a subpath (e.g. GitHub Pages)
+**Static hosting on a subpath (e.g. GitHub Pages)**
 
-Set `base` in `vite.config.ts` to your repository path, for example:
+1. Set `base` in `vite.config.ts` to your repository path, e.g. `base: "/your-repo-name/"`.
+2. Run `npm run build` and deploy the `dist` folder.
+3. The router respects `import.meta.env.BASE_URL`; rebuild whenever you change `base`.
 
-```ts
-base: "/your-repo-name/",
-```
-
-The app router uses `import.meta.env.BASE_URL` so routes stay correct. Rebuild after changing `base`.
+Adding a **screenshot or GIF** at the top of this README on GitHub helps visitors see the UI at a glance.
 
 ---
 
-## Useful paths in this repo
+## Project layout
 
 | Path | Role |
 |------|------|
 | `src/pages/` | Landing, dashboard, new issue, issue detail |
-| `src/firebase/` | Config, auth helpers, storage uploads |
-| `src/utils/environment.ts` | Snapshot of browser context for new issues |
-| `src/utils/issueMarkdown.ts` | Markdown string for “Copy as Markdown” |
-| `src/hooks/useSessionClientErrors.ts` | Session error listeners on the new-issue page |
-| `firestore.rules` / `storage.rules` | Owner-scoped access |
+| `src/firebase/` | Firebase config, auth helpers, Storage uploads |
+| `src/utils/environment.ts` | Snapshot of browser context when an issue is created |
+| `src/utils/issueMarkdown.ts` | Builds Markdown for **Copy as Markdown** |
+| `src/hooks/useSessionClientErrors.ts` | Captures errors during the new-issue session |
+| `firestore.rules`, `storage.rules` | Security rules |
 
 ---
 
-## npm scripts
+## Markdown export
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start Vite dev server |
-| `npm run build` | Typecheck + production build |
-| `npm run preview` | Serve the production build locally |
-| `npm run lint` | Run ESLint |
-| `npm test` | Run Vitest (unit tests; `npm run test:watch` for watch mode) |
+Markdown is **not** stored as files in the repo. When you click **Copy as Markdown** on an issue, the app builds a string in code.
+
+- **Implementation:** [`src/utils/issueMarkdown.ts`](src/utils/issueMarkdown.ts) — `buildIssueMarkdown(issue)`.
+- **UI:** Issue detail → top bar → **Copy as Markdown**.
+
+Adjust wording or structure by editing `issueMarkdown.ts`.
 
 ---
 
 ## License
 
-Add a `LICENSE` file if you open-source the project.
+Add a `LICENSE` file when you want to specify how others may use or contribute to the project.
