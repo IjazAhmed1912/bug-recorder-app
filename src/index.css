@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans-app: "DM Sans", system-ui, sans-serif;
+    color-scheme: light;
+  }
+
+  html {
+    @apply antialiased;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply m-0 min-h-screen bg-zinc-50 font-sans text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100;
+    font-family: var(--font-sans-app);
+  }
+
+  #root {
+    @apply min-h-screen w-full;
+  }
+}
+
+/* Jam-inspired: soft moving gradient border + glow */
+@layer utilities {
+  .bg-app {
+    @apply bg-zinc-50 dark:bg-zinc-950;
+  }
+
+  .glow-border {
+    background: linear-gradient(
+      120deg,
+      rgba(139, 92, 246, 0.55),
+      rgba(236, 72, 153, 0.45),
+      rgba(34, 211, 238, 0.5),
+      rgba(139, 92, 246, 0.55)
+    );
+    background-size: 240% 240%;
+    animation: glow-shift 10s ease infinite;
+    box-shadow:
+      0 0 40px -10px rgba(139, 92, 246, 0.45),
+      0 0 60px -20px rgba(236, 72, 153, 0.25);
+  }
+
+  .glow-border-intense {
+    background: linear-gradient(
+      135deg,
+      rgba(167, 139, 250, 0.85),
+      rgba(244, 114, 182, 0.75),
+      rgba(34, 211, 238, 0.8),
+      rgba(167, 139, 250, 0.85)
+    );
+    background-size: 260% 260%;
+    animation: glow-shift 7s ease infinite;
+    box-shadow:
+      0 0 50px -8px rgba(139, 92, 246, 0.65),
+      0 0 80px -20px rgba(236, 72, 153, 0.4);
+  }
+
+  .glow-aurora {
+    background: radial-gradient(
+        ellipse 80% 50% at 50% -20%,
+        rgba(139, 92, 246, 0.22),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 60% 40% at 100% 0%,
+        rgba(236, 72, 153, 0.15),
+        transparent 45%
+      ),
+      radial-gradient(
+        ellipse 50% 30% at 0% 100%,
+        rgba(34, 211, 238, 0.12),
+        transparent 40%
+      );
+  }
+
+  .dark .glow-aurora {
+    background: radial-gradient(
+        ellipse 80% 50% at 50% -20%,
+        rgba(139, 92, 246, 0.35),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 60% 40% at 100% 0%,
+        rgba(236, 72, 153, 0.22),
+        transparent 45%
+      ),
+      radial-gradient(
+        ellipse 50% 30% at 0% 100%,
+        rgba(34, 211, 238, 0.18),
+        transparent 40%
+      );
+  }
+
+  .glow-text {
+    text-shadow:
+      0 0 24px rgba(167, 139, 250, 0.35),
+      0 0 48px rgba(236, 72, 153, 0.2);
+  }
+
+  .dark .glow-text {
+    text-shadow:
+      0 0 28px rgba(167, 139, 250, 0.45),
+      0 0 56px rgba(236, 72, 153, 0.28);
+  }
+}
+
+@keyframes glow-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
