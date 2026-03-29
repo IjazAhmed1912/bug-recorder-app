@@ -12,6 +12,12 @@
     @apply antialiased;
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
   html.dark {
     color-scheme: dark;
   }

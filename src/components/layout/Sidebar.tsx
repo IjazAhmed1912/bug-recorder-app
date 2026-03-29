@@ -54,7 +54,7 @@ export default function Sidebar() {
 
   const inner = (
     <>
-      <div className="flex min-h-12 items-center justify-between gap-2 border-b border-zinc-200 px-3 py-2 dark:border-zinc-800/80">
+      <div className="flex min-h-12 shrink-0 items-center justify-between gap-2 border-b border-zinc-200 px-3 py-2 dark:border-zinc-800/80">
         <div className="flex min-w-0 items-center gap-2.5">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-900 text-white shadow-[0_0_20px_-5px_rgba(167,139,250,0.45)] dark:bg-zinc-100 dark:text-zinc-900">
             <AppLogoIcon className="h-7 w-7" />
@@ -88,7 +88,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-0.5 p-2" aria-label="Workspace">
+      <nav className="flex flex-col gap-0.5 p-2" aria-label="Main">
         <NavLink to="/dashboard" end className={linkClass} onClick={afterNav}>
           <IconHome className="h-[15px] w-[15px] shrink-0 opacity-90" />
           Issues
@@ -99,7 +99,7 @@ export default function Sidebar() {
         </NavLink>
       </nav>
 
-      <div className="border-t border-zinc-200 px-3 py-2.5 dark:border-zinc-800/80">
+      <div className="mt-auto shrink-0 border-t border-zinc-200 px-3 py-2.5 dark:border-zinc-800/80">
         <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-600">
           Workspace
         </p>

@@ -166,7 +166,7 @@ export default function Landing() {
 
         <section
           id="how"
-          className="border-y border-zinc-100 bg-zinc-50/80 py-14 sm:py-16 dark:border-zinc-800 dark:bg-zinc-900/50"
+          className="scroll-mt-28 border-y border-zinc-100 bg-zinc-50/80 py-14 sm:py-16 dark:border-zinc-800 dark:bg-zinc-900/50"
         >
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <h2 className="text-center text-lg font-semibold text-zinc-900 sm:text-xl dark:text-zinc-50">
@@ -213,7 +213,10 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="features" className="py-14 sm:py-16">
+        <section
+          id="features"
+          className="scroll-mt-28 py-14 sm:py-16"
+        >
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <h2 className="text-center text-lg font-semibold text-zinc-900 sm:text-xl dark:text-zinc-50">
               What makes a report actionable

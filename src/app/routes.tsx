@@ -1,45 +1,38 @@
-import { lazy, Suspense } from "react"
-import { createBrowserRouter } from "react-router-dom"
-import PageLoading from "../components/PageLoading"
+import { Outlet, createBrowserRouter } from "react-router-dom"
+import Landing from "../pages/Landing"
+import Dashboard from "../pages/Dashboard"
+import NewIssue from "../pages/NewIssue"
+import IssueDetail from "../pages/IssueDetail"
+import RouteErrorFallback from "../components/RouteErrorFallback"
 
-const Landing = lazy(() => import("../pages/Landing"))
-const Dashboard = lazy(() => import("../pages/Dashboard"))
-const NewIssue = lazy(() => import("../pages/NewIssue"))
-const IssueDetail = lazy(() => import("../pages/IssueDetail"))
+function RootLayout() {
+  return <Outlet />
+}
 
 export const router = createBrowserRouter(
   [
     {
       path: "/",
-      element: (
-        <Suspense fallback={<PageLoading />}>
-          <Landing />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/dashboard",
-      element: (
-        <Suspense fallback={<PageLoading />}>
-          <Dashboard />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/new",
-      element: (
-        <Suspense fallback={<PageLoading />}>
-          <NewIssue />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/issues/:id",
-      element: (
-        <Suspense fallback={<PageLoading />}>
-          <IssueDetail />
-        </Suspense>
-      ),
+      element: <RootLayout />,
+      errorElement: <RouteErrorFallback />,
+      children: [
+        {
+          index: true,
+          element: <Landing />,
+        },
+        {
+          path: "dashboard",
+          element: <Dashboard />,
+        },
+        {
+          path: "new",
+          element: <NewIssue />,
+        },
+        {
+          path: "issues/:id",
+          element: <IssueDetail />,
+        },
+      ],
     },
   ],
   {
