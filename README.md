@@ -5,7 +5,6 @@
 ### For GitHub (quick read)
 
 - **What it is:** A signed-in **inbox** for bug reports—steps, tags, optional external links, screenshots, optional click recording, captured **environment** (URL, viewport, UA, …), search/filter, **CSV** export, and **Copy as Markdown**.
-- **Why it exists:** A **portfolio / CV** project to show React + TypeScript + Firebase (Auth, Firestore, Storage, rules) and **Vitest** tests in something that feels like a small product—not a commercial SaaS.
 - **Run it:** Node 20+, a Firebase project, then **[Getting started](#getting-started)** (`npm install`, copy `.env.example` → `.env.local`, `npm run dev`).
 
 Tip: add a **screenshot or GIF** near the top of this file on GitHub (drag-and-drop in the README editor) so visitors see the UI immediately.
