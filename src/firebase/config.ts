@@ -2,32 +2,32 @@ import { initializeApp } from "firebase/app"
 import { getAuth } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
 import { getStorage } from "firebase/storage"
-import { envOr } from "./env"
+import { requireEnv } from "./env"
 
 const firebaseConfig = {
-  apiKey: envOr(
-    import.meta.env.VITE_FIREBASE_API_KEY,
-    "AIzaSyC8HggLN9ZwUU04UamWCD8N8lqBhMgfI00"
+  apiKey: requireEnv(
+    "VITE_FIREBASE_API_KEY",
+    import.meta.env.VITE_FIREBASE_API_KEY
   ),
-  authDomain: envOr(
-    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    "bug-recorder-app.firebaseapp.com"
+  authDomain: requireEnv(
+    "VITE_FIREBASE_AUTH_DOMAIN",
+    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN
   ),
-  projectId: envOr(
-    import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    "bug-recorder-app"
+  projectId: requireEnv(
+    "VITE_FIREBASE_PROJECT_ID",
+    import.meta.env.VITE_FIREBASE_PROJECT_ID
   ),
-  storageBucket: envOr(
-    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    "bug-recorder-app.firebasestorage.app"
+  storageBucket: requireEnv(
+    "VITE_FIREBASE_STORAGE_BUCKET",
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET
   ),
-  messagingSenderId: envOr(
-    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    "479791588235"
+  messagingSenderId: requireEnv(
+    "VITE_FIREBASE_MESSAGING_SENDER_ID",
+    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID
   ),
-  appId: envOr(
-    import.meta.env.VITE_FIREBASE_APP_ID,
-    "1:479791588235:web:feff28b3844a2a2092458e"
+  appId: requireEnv(
+    "VITE_FIREBASE_APP_ID",
+    import.meta.env.VITE_FIREBASE_APP_ID
   ),
 }
 

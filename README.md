@@ -65,7 +65,7 @@ TraceFlow is a web app for **filing and managing bug reports**. Reporters sign i
    cp .env.example .env.local
    ```
 
-   Edit `.env.local` and set the `VITE_*` variables as described in `.env.example`. For local-only hacking, empty values may fall back via `src/firebase/config.ts`; for any shared or production deployment, use **your own** Firebase project and real keys.
+   Edit `.env.local` and set every `VITE_*` value from your Firebase web app config (see `.env.example`). The app does **not** embed Firebase keys in code—all config must come from `.env.local`.
 
 3. In the Firebase console, enable at least one **Authentication** provider, create a **Firestore** database, and enable **Storage**.
 
