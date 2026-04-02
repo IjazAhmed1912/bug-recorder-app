@@ -488,66 +488,6 @@ export default function IssueDetail() {
                       </div>
                     )}
 
-                    {issue.recordingEvents &&
-                      issue.recordingEvents.length > 0 && (
-                        <div>
-                          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                            Click recording
-                          </h2>
-                          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">
-                            Pointer events relative to the window when you used
-                            “Start recording” on the new-issue page.
-                          </p>
-                          <div className="mt-2 overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
-                            <table className="w-full min-w-[280px] text-left text-[12px]">
-                              <thead>
-                                <tr className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/80">
-                                  <th className="px-2 py-1.5 font-medium text-zinc-600 dark:text-zinc-400">
-                                    #
-                                  </th>
-                                  <th className="px-2 py-1.5 font-medium text-zinc-600 dark:text-zinc-400">
-                                    Δ ms
-                                  </th>
-                                  <th className="px-2 py-1.5 font-medium text-zinc-600 dark:text-zinc-400">
-                                    x, y
-                                  </th>
-                                  <th className="px-2 py-1.5 font-medium text-zinc-600 dark:text-zinc-400">
-                                    Type
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {(() => {
-                                  const ev = [...issue.recordingEvents!].sort(
-                                    (a, b) => a.time - b.time
-                                  )
-                                  const t0 = ev[0]?.time ?? 0
-                                  return ev.map((e, i) => (
-                                    <tr
-                                      key={`${e.time}-${i}`}
-                                      className="border-b border-zinc-100 last:border-0 dark:border-zinc-800"
-                                    >
-                                      <td className="px-2 py-1.5 tabular-nums text-zinc-700 dark:text-zinc-300">
-                                        {i + 1}
-                                      </td>
-                                      <td className="px-2 py-1.5 tabular-nums text-zinc-700 dark:text-zinc-300">
-                                        {e.time - t0}
-                                      </td>
-                                      <td className="px-2 py-1.5 font-mono tabular-nums text-zinc-700 dark:text-zinc-300">
-                                        {Math.round(e.x)}, {Math.round(e.y)}
-                                      </td>
-                                      <td className="px-2 py-1.5 text-zinc-600 dark:text-zinc-400">
-                                        {e.type}
-                                      </td>
-                                    </tr>
-                                  ))
-                                })()}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      )}
-
                     {issue.clientErrors && issue.clientErrors.length > 0 && (
                       <div>
                         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">

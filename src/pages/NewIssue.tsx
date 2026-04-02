@@ -18,20 +18,13 @@ import { useAuthStore } from "../store/authStore"
 import Sidebar from "../components/layout/Sidebar"
 import MobileMenuButton from "../components/MobileMenuButton"
 import { Link, useNavigate } from "react-router-dom"
-import type { IssueDoc, RecordingEvent } from "../types/issue"
+import type { IssueDoc } from "../types/issue"
 import { findSimilarIssueTitles } from "../utils/findSimilarIssues"
 import { captureScreenshot } from "../utils/screenshot"
-import { startRecording, stopRecording } from "../utils/recorder"
 import { collectEnvironment } from "../utils/environment"
 import { useSessionClientErrors } from "../hooks/useSessionClientErrors"
 import GlowCard from "../components/GlowCard"
-import {
-  Camera,
-  CheckCircle2,
-  Clapperboard,
-  MousePointerClick,
-  Square,
-} from "lucide-react"
+import { Camera, CheckCircle2 } from "lucide-react"
 import { parseTagsInput } from "../utils/tags"
 
 export default function NewIssue() {
@@ -84,8 +77,6 @@ export default function NewIssue() {
     return () => window.clearTimeout(t)
   }, [title])
   const [screenshotPreviews, setScreenshotPreviews] = useState<string[]>([])
-  const [recordingEvents, setRecordingEvents] = useState<RecordingEvent[]>([])
-  const [recordingActive, setRecordingActive] = useState(false)
   const [tagsInput, setTagsInput] = useState("")
   const [externalLink, setExternalLink] = useState("")
   const [expectedBehavior, setExpectedBehavior] = useState("")
@@ -112,17 +103,6 @@ export default function NewIssue() {
       console.error(e)
       setError("Screenshot failed. Try again.")
     }
-  }
-
-  const handleStartRecording = () => {
-    startRecording()
-    setRecordingActive(true)
-  }
-
-  const handleStopRecording = () => {
-    const events = stopRecording() as RecordingEvent[]
-    setRecordingEvents(events)
-    setRecordingActive(false)
   }
 
   const handleSubmit = async () => {
@@ -178,7 +158,6 @@ export default function NewIssue() {
         expectedBehavior: exp || null,
         actualBehavior: act || null,
         screenshotUrls: [],
-        recordingEvents: recordingEvents.length ? recordingEvents : null,
         environment: collectEnvironment(),
         clientErrors:
           sessionClientErrors.length > 0 ? sessionClientErrors : null,
@@ -279,20 +258,20 @@ export default function NewIssue() {
           <div className="mx-auto flex max-w-2xl flex-col gap-4">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 text-violet-700 ring-1 ring-violet-500/25 dark:bg-violet-500/10 dark:text-violet-300 dark:ring-violet-500/20">
-                <Clapperboard className="h-5 w-5" strokeWidth={2} aria-hidden />
+                <Camera className="h-5 w-5" strokeWidth={2} aria-hidden />
               </div>
               <div className="min-w-0 pt-0.5">
                 <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                  Capture evidence
+                  Screenshot
                 </h2>
                 <p className="mt-0.5 text-[13px] leading-snug text-zinc-500 dark:text-zinc-500">
-                  Optional — add a screenshot of the problem and/or a short
-                  click trace so engineers see what you saw.
+                  Optional — capture the current tab so engineers see what you
+                  saw. Use after the bug is visible.
                 </p>
               </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="max-w-md">
               <div className="flex flex-col rounded-xl border border-zinc-200/90 bg-white p-4 shadow-sm dark:border-zinc-700/90 dark:bg-zinc-900/80">
                 <div className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
                   <Camera
@@ -300,90 +279,21 @@ export default function NewIssue() {
                     strokeWidth={2}
                     aria-hidden
                   />
-                  <span className="text-[13px] font-semibold">Screenshot</span>
+                  <span className="text-[13px] font-semibold">
+                    Capture tab
+                  </span>
                 </div>
                 <p className="mt-1.5 text-[12px] leading-relaxed text-zinc-500 dark:text-zinc-500">
-                  Freezes the current tab view — use after the bug is visible.
+                  Freezes the current page — add more shots if needed.
                 </p>
                 <button
                   type="button"
                   onClick={() => void handleScreenshot()}
-                  className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-violet-200 bg-violet-50/80 px-3 py-2.5 text-[13px] font-medium text-violet-900 transition hover:bg-violet-100 dark:border-violet-800/60 dark:bg-violet-950/40 dark:text-violet-200 dark:hover:bg-violet-950/70"
+                  className="mt-3 inline-flex w-full min-h-[44px] items-center justify-center gap-2 rounded-lg border border-violet-200 bg-violet-50/80 px-3 py-2.5 text-[13px] font-medium text-violet-900 transition hover:bg-violet-100 dark:border-violet-800/60 dark:bg-violet-950/40 dark:text-violet-200 dark:hover:bg-violet-950/70"
                 >
                   <Camera className="h-4 w-4" strokeWidth={2} aria-hidden />
                   Screenshot
                 </button>
-              </div>
-
-              <div
-                className={`flex flex-col rounded-xl border p-4 shadow-sm transition-colors ${
-                  recordingActive
-                    ? "border-rose-300/80 bg-rose-50/50 dark:border-rose-900/50 dark:bg-rose-950/25"
-                    : "border-zinc-200/90 bg-white dark:border-zinc-700/90 dark:bg-zinc-900/80"
-                }`}
-              >
-                <div className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
-                  <MousePointerClick
-                    className={`h-4 w-4 shrink-0 ${
-                      recordingActive
-                        ? "text-rose-600 dark:text-rose-400"
-                        : "text-violet-600 dark:text-violet-400"
-                    }`}
-                    strokeWidth={2}
-                    aria-hidden
-                  />
-                  <span className="text-[13px] font-semibold">
-                    Click recording
-                  </span>
-                  {recordingActive && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-600/15 px-2 py-0.5 text-[11px] font-medium uppercase tracking-wide text-rose-800 dark:bg-rose-500/20 dark:text-rose-200">
-                      <span
-                        className="h-1.5 w-1.5 animate-pulse rounded-full bg-rose-600 dark:bg-rose-400"
-                        aria-hidden
-                      />
-                      Live
-                    </span>
-                  )}
-                </div>
-                <p className="mt-1.5 text-[12px] leading-relaxed text-zinc-500 dark:text-zinc-500">
-                  {recordingActive
-                    ? "Reproduce the issue in this tab, then finish to attach the click trail."
-                    : "Records pointer clicks and timestamps while you walk through the bug."}
-                </p>
-                {!recordingActive ? (
-                  <button
-                    type="button"
-                    onClick={handleStartRecording}
-                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-[13px] font-medium text-zinc-800 shadow-sm transition hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-                  >
-                    <MousePointerClick
-                      className="h-4 w-4"
-                      strokeWidth={2}
-                      aria-hidden
-                    />
-                    Start recording
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleStopRecording}
-                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-rose-200 bg-white px-3 py-2.5 text-[13px] font-medium text-rose-900 shadow-sm transition hover:bg-rose-50 dark:border-rose-800/60 dark:bg-rose-950/50 dark:text-rose-100 dark:hover:bg-rose-950/80"
-                  >
-                    <Square
-                      className="h-3.5 w-3.5 fill-current"
-                      strokeWidth={2}
-                      aria-hidden
-                    />
-                    Finish and save clicks
-                  </button>
-                )}
-                {recordingEvents.length > 0 && !recordingActive && (
-                  <p className="mt-2 text-[11px] text-zinc-500 dark:text-zinc-500">
-                    {recordingEvents.length} click
-                    {recordingEvents.length === 1 ? "" : "s"} saved — will
-                    attach when you create the issue.
-                  </p>
-                )}
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 # TraceFlow
 
-TraceFlow is a web app for **filing and managing bug reports**. Reporters sign in, create issues with reproduction steps, and can attach screenshots, optional click recordings, and automatically captured **environment** data (URL, viewport, language, time zone, platform, user agent). The inbox supports **search** (title, steps, tags, external links), **filters**, **CSV export**, and each issue can be copied as **Markdown** for tools like Jira, GitHub, or Slack.
+TraceFlow is a web app for **filing and managing bug reports**. Reporters sign in, create issues with reproduction steps, and can attach screenshots and automatically captured **environment** data (URL, viewport, language, time zone, platform, user agent). The inbox supports **search** (title, steps, tags, external links), **filters**, **CSV export**, and each issue can be copied as **Markdown** for tools like Jira, GitHub, or Slack.
 
 ---
 
@@ -23,7 +23,7 @@ TraceFlow is a web app for **filing and managing bug reports**. Reporters sign i
 | | |
 |:---|:---|
 | **Inbox** | List, search, and filter issues; export the current view to CSV. |
-| **New issue** | Steps, tags, optional external link, screenshots, optional recording; session **client errors** can be captured while filing. |
+| **New issue** | Steps, tags, optional external link, screenshots; session **client errors** can be captured while filing. |
 | **Issue detail** | Status, priority, assignee, tags, link, comments; **Copy as Markdown**. |
 | **Theme** | Light / dark. Data access is limited to the signed-in user via Firestore and Storage rules. |
 

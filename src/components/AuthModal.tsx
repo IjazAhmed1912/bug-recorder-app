@@ -160,7 +160,7 @@ export default function AuthModal({
     panel === "reset"
       ? "We’ll email you a link to choose a new password."
       : isSignup
-        ? "Start recording issues in minutes."
+        ? "Start filing issues in minutes."
         : "Sign in to open your dashboard."
 
   return (

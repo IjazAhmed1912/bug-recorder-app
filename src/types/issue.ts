@@ -7,13 +7,6 @@ export type IssueComment = {
   createdAt: Timestamp | null
 }
 
-export type RecordingEvent = {
-  type: string
-  x: number
-  y: number
-  time: number
-}
-
 /** Browser context captured when the issue is filed. */
 export type IssueEnvironment = {
   pageUrl: string
@@ -58,7 +51,6 @@ export type IssueDoc = {
   screenshotUrls?: string[]
   /** Set if background upload after create failed (issue still saved). */
   screenshotUploadError?: string | null
-  recordingEvents?: RecordingEvent[]
   /** Auto-captured page / device context at create time. */
   environment?: IssueEnvironment
   /** window.onerror / unhandledrejection while filing (if any). */

@@ -181,7 +181,7 @@ export default function Landing() {
                 {
                   n: "1",
                   t: "Reproduce with proof",
-                  d: "Walk through the bug in your browser: add steps, grab screenshots, optionally record clicks, and capture session errors — all tied to one report.",
+                  d: "Walk through the bug in your browser: add steps, grab screenshots, and capture session errors — all tied to one report.",
                 },
                 {
                   n: "2",
@@ -233,7 +233,7 @@ export default function Landing() {
                 },
                 {
                   t: "Evidence, not vibes",
-                  d: "Screenshots, a click-by-click timeline, and optional runtime errors from the filing session — attached to the same issue as your written steps.",
+                  d: "Screenshots and optional runtime errors from the filing session — attached to the same issue as your written steps.",
                 },
                 {
                   t: "Markdown in one click",

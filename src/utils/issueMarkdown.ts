@@ -65,13 +65,6 @@ export function buildIssueMarkdown(issue: IssueDoc): string {
     lines.push("")
   }
 
-  const events = issue.recordingEvents ?? []
-  if (events.length > 0) {
-    lines.push("## Click recording")
-    lines.push(`_${events.length} pointer event(s) captured (see TraceFlow for timeline)._`)
-    lines.push("")
-  }
-
   const errs = issue.clientErrors ?? []
   if (errs.length > 0) {
     lines.push("## Client errors (this session)")
