@@ -30,6 +30,8 @@ export default function IssueDetail() {
   const [assigneeEmail, setAssigneeEmail] = useState("")
   const [tagsInput, setTagsInput] = useState("")
   const [externalLinkInput, setExternalLinkInput] = useState("")
+  const [expectedInput, setExpectedInput] = useState("")
+  const [actualInput, setActualInput] = useState("")
   const [saving, setSaving] = useState(false)
   const [copiedMd, setCopiedMd] = useState(false)
   const [copyError, setCopyError] = useState(false)
@@ -46,11 +48,14 @@ export default function IssueDetail() {
           setError("Issue not found.")
           return
         }
+        setError("")
         const data = snap.data() as Omit<IssueDoc, "id">
         setIssue({ id: snap.id, ...data })
         setAssigneeEmail(data.assigneeEmail ?? "")
         setTagsInput((data.tags ?? []).join(", "))
         setExternalLinkInput(data.externalLink ?? "")
+        setExpectedInput(data.expectedBehavior ?? "")
+        setActualInput(data.actualBehavior ?? "")
       } catch (e) {
         console.error(e)
         setError("Could not load issue.")
@@ -66,6 +71,7 @@ export default function IssueDetail() {
   const persistMeta = async (patch: Record<string, unknown>) => {
     if (!id) return
     setSaving(true)
+    setError("")
     try {
       await updateDoc(doc(db, "bugs", id), {
         ...patch,
@@ -168,8 +174,11 @@ export default function IssueDetail() {
 
         <main className="flex-1 overflow-auto p-4 sm:p-6">
           <div className="mx-auto max-w-3xl space-y-6">
-            {error && !issue && (
-              <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200">
+            {error && (
+              <p
+                role="alert"
+                className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200"
+              >
                 {error}
               </p>
             )}
@@ -393,6 +402,49 @@ export default function IssueDetail() {
                         </dl>
                       </div>
                     )}
+
+                    <div>
+                      <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                        Expected vs actual
+                      </h2>
+                      <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                        <label className="block text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
+                          Expected
+                          <textarea
+                            className="mt-1 w-full resize-y rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                            rows={3}
+                            disabled={saving}
+                            value={expectedInput}
+                            onChange={(e) => setExpectedInput(e.target.value)}
+                            placeholder="What should happen"
+                          />
+                        </label>
+                        <label className="block text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
+                          Actual
+                          <textarea
+                            className="mt-1 w-full resize-y rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                            rows={3}
+                            disabled={saving}
+                            value={actualInput}
+                            onChange={(e) => setActualInput(e.target.value)}
+                            placeholder="What happened instead"
+                          />
+                        </label>
+                      </div>
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() =>
+                          void persistMeta({
+                            expectedBehavior: expectedInput.trim() || null,
+                            actualBehavior: actualInput.trim() || null,
+                          })
+                        }
+                        className="mt-2 rounded-lg bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60 dark:bg-violet-600 dark:hover:bg-violet-500"
+                      >
+                        Save expected / actual
+                      </button>
+                    </div>
 
                     <div>
                       <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">

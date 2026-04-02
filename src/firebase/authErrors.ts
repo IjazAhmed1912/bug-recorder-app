@@ -34,6 +34,8 @@ export function getAuthErrorMessage(err: unknown): string {
       return "Too many attempts. Wait a minute and try again."
     case "auth/network-request-failed":
       return "Network error. Check your connection."
+    case "auth/popup-blocked":
+      return "Your browser blocked the sign-in window. Allow popups for this site, or use the full-page sign-in we opened instead."
     case "auth/popup-closed-by-user":
       return "Sign-in was cancelled. Try again when you’re ready."
     case "auth/cancelled-popup-request":

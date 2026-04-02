@@ -12,6 +12,8 @@ describe("buildIssuesCsv", () => {
         priority: "high",
         tags: ["a", "b"],
         externalLink: "https://x.test",
+        expectedBehavior: "Page loads",
+        actualBehavior: "Spinner forever",
         steps: ["Step 1", "Step, two"],
         createdAt: {
           toDate: () => new Date("2026-03-28T12:00:00.000Z"),
@@ -19,7 +21,9 @@ describe("buildIssuesCsv", () => {
       },
     ]
     const csv = buildIssuesCsv(issues)
-    expect(csv).toContain("id,title,status,priority,tags,external_link,steps,created_at")
+    expect(csv).toContain(
+      "id,title,status,priority,tags,external_link,expected_behavior,actual_behavior,steps,created_at"
+    )
     expect(csv).toContain("abc")
     expect(csv).toContain('"Hello, ""world"""')
     expect(csv).toContain("a; b")
@@ -32,7 +36,7 @@ describe("buildIssuesCsv", () => {
     const csv = buildIssuesCsv(issues)
     const lines = csv.split("\r\n")
     expect(lines[0]).toBe(
-      "id,title,status,priority,tags,external_link,steps,created_at"
+      "id,title,status,priority,tags,external_link,expected_behavior,actual_behavior,steps,created_at"
     )
     expect(lines[1]).toContain("x")
   })

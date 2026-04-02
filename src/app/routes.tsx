@@ -3,10 +3,17 @@ import Landing from "../pages/Landing"
 import Dashboard from "../pages/Dashboard"
 import NewIssue from "../pages/NewIssue"
 import IssueDetail from "../pages/IssueDetail"
+import NotFound from "../pages/NotFound"
+import OAuthRedirectHandler from "../components/OAuthRedirectHandler"
 import RouteErrorFallback from "../components/RouteErrorFallback"
 
 function RootLayout() {
-  return <Outlet />
+  return (
+    <>
+      <OAuthRedirectHandler />
+      <Outlet />
+    </>
+  )
 }
 
 export const router = createBrowserRouter(
@@ -31,6 +38,10 @@ export const router = createBrowserRouter(
         {
           path: "issues/:id",
           element: <IssueDetail />,
+        },
+        {
+          path: "*",
+          element: <NotFound />,
         },
       ],
     },

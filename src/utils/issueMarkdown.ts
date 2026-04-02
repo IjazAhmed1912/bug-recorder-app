@@ -38,6 +38,17 @@ export function buildIssueMarkdown(issue: IssueDoc): string {
     lines.push("")
   }
 
+  const exp = (issue.expectedBehavior ?? "").trim()
+  const act = (issue.actualBehavior ?? "").trim()
+  if (exp || act) {
+    lines.push("## Expected vs actual")
+    if (exp) lines.push(`- **Expected:** ${exp}`)
+    else lines.push("- **Expected:** _Not specified_")
+    if (act) lines.push(`- **Actual:** ${act}`)
+    else lines.push("- **Actual:** _Not specified_")
+    lines.push("")
+  }
+
   lines.push("## Steps to reproduce")
   const steps = issue.steps ?? []
   if (steps.length === 0) {

@@ -21,6 +21,8 @@ export function buildIssuesCsv(issues: IssueDoc[]): string {
     "priority",
     "tags",
     "external_link",
+    "expected_behavior",
+    "actual_behavior",
     "steps",
     "created_at",
   ]
@@ -34,6 +36,8 @@ export function buildIssuesCsv(issues: IssueDoc[]): string {
       issue.priority ?? "",
       tags,
       issue.externalLink ?? "",
+      issue.expectedBehavior ?? "",
+      issue.actualBehavior ?? "",
       steps,
       formatCreated(issue),
     ]

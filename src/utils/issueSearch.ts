@@ -17,5 +17,8 @@ export function issueMatchesSearch(issue: IssueDoc, rawQuery: string): boolean {
 
   if ((issue.externalLink ?? "").toLowerCase().includes(q)) return true
 
+  if ((issue.expectedBehavior ?? "").toLowerCase().includes(q)) return true
+  if ((issue.actualBehavior ?? "").toLowerCase().includes(q)) return true
+
   return false
 }

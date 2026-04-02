@@ -51,6 +51,10 @@ export type IssueDoc = {
   tags?: string[]
   /** Optional link to Jira, GitHub issue, Slack thread, etc. */
   externalLink?: string | null
+  /** What should have happened (classic bug template). */
+  expectedBehavior?: string | null
+  /** What happened instead. */
+  actualBehavior?: string | null
   screenshotUrls?: string[]
   /** Set if background upload after create failed (issue still saved). */
   screenshotUploadError?: string | null

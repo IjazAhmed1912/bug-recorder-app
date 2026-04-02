@@ -110,8 +110,9 @@ export default function AuthModal({
     try {
       setError("")
       setOauthLoading("google")
-      await signInWithGoogle()
-      finishAuth()
+      const user = await signInWithGoogle()
+      if (user) finishAuth()
+      /* null = signInWithRedirect started; page will navigate away */
     } catch (err: unknown) {
       setError(getAuthErrorMessage(err))
     } finally {
@@ -123,8 +124,8 @@ export default function AuthModal({
     try {
       setError("")
       setOauthLoading("github")
-      await signInWithGithub()
-      finishAuth()
+      const user = await signInWithGithub()
+      if (user) finishAuth()
     } catch (err: unknown) {
       setError(getAuthErrorMessage(err))
     } finally {
@@ -181,7 +182,7 @@ export default function AuthModal({
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.94, y: 24, opacity: 0 }}
             transition={{ type: "spring", damping: 26, stiffness: 320 }}
-            className="w-full max-w-[420px] overflow-hidden rounded-3xl border border-stone-200/90 bg-white shadow-card dark:border-zinc-700 dark:bg-zinc-900"
+            className="max-h-[90vh] w-full max-w-[420px] overflow-y-auto overflow-x-hidden rounded-3xl border border-stone-200/90 bg-white shadow-card dark:border-zinc-700 dark:bg-zinc-900"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="border-b border-stone-100 bg-gradient-to-br from-amber-50/80 to-white px-6 py-5 dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-900">

@@ -45,4 +45,15 @@ describe("issueMatchesSearch", () => {
     expect(issueMatchesSearch(i, "github")).toBe(true)
     expect(issueMatchesSearch(i, "issues/42")).toBe(true)
   })
+
+  it("matches expected and actual", () => {
+    const i = issue({
+      id: "1",
+      title: "T",
+      expectedBehavior: "Button should be blue",
+      actualBehavior: "Button is red",
+    })
+    expect(issueMatchesSearch(i, "blue")).toBe(true)
+    expect(issueMatchesSearch(i, "red")).toBe(true)
+  })
 })

@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useState } from "react"
+import { getAuth } from "firebase/auth"
 import { db } from "../firebase/config"
-import { collection, getDocs } from "firebase/firestore"
+import {
+  collection,
+  getDocs,
+  limit,
+  query as firestoreQuery,
+  where,
+} from "firebase/firestore"
 import { useAuthStore } from "../store/authStore"
 import { motion } from "framer-motion"
 import { useLocation, useNavigate } from "react-router-dom"
@@ -17,6 +24,7 @@ import { buildIssuesCsv, downloadCsvFile } from "../utils/exportIssuesCsv"
 export default function Dashboard() {
   const [issues, setIssues] = useState<IssueDoc[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState("")
   const [query, setQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [priorityFilter, setPriorityFilter] = useState<string>("all")
@@ -44,8 +52,25 @@ export default function Dashboard() {
   useEffect(() => {
     let cancelled = false
     const fetchIssues = async () => {
+      setLoadError("")
+      const uid = getAuth().currentUser?.uid
+      if (!uid) {
+        if (!cancelled) {
+          setIssues([])
+          setLoading(false)
+          setLoadError(
+            "You’re not signed in. Use Sign in from the home page to open your inbox."
+          )
+        }
+        return
+      }
       try {
-        const snapshot = await getDocs(collection(db, "bugs"))
+        const q = firestoreQuery(
+          collection(db, "bugs"),
+          where("userUid", "==", uid),
+          limit(200)
+        )
+        const snapshot = await getDocs(q)
         if (cancelled) return
         const data = snapshot.docs.map((docSnap) => ({
           id: docSnap.id,
@@ -54,6 +79,11 @@ export default function Dashboard() {
         setIssues(data)
       } catch (err) {
         console.error("Error fetching issues:", err)
+        if (!cancelled) {
+          setLoadError(
+            "Couldn’t load issues. Check your connection and Firestore rules, then refresh."
+          )
+        }
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -166,6 +196,14 @@ export default function Dashboard() {
 
         <main className="flex-1 overflow-auto p-4 sm:p-6">
           <div className="mx-auto max-w-6xl">
+            {loadError && (
+              <p
+                role="alert"
+                className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-100"
+              >
+                {loadError}
+              </p>
+            )}
             <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
