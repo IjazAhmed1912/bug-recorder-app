@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import {
   arrayUnion,
+  deleteDoc,
   doc,
   getDoc,
   serverTimestamp,
@@ -16,7 +17,7 @@ import type { IssueDoc } from "../types/issue"
 import GlowCard from "../components/GlowCard"
 import { buildIssueMarkdown } from "../utils/issueMarkdown"
 import { parseTagsInput } from "../utils/tags"
-import { Copy, Check } from "lucide-react"
+import { Copy, Check, Trash2 } from "lucide-react"
 
 export default function IssueDetail() {
   const { id } = useParams<{ id: string }>()
@@ -35,6 +36,7 @@ export default function IssueDetail() {
   const [saving, setSaving] = useState(false)
   const [copiedMd, setCopiedMd] = useState(false)
   const [copyError, setCopyError] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -116,6 +118,28 @@ export default function IssueDetail() {
     }
   }
 
+  const handleDeleteIssue = async () => {
+    if (!id || !issue) return
+    if (
+      !window.confirm(
+        "Delete this issue permanently? This cannot be undone."
+      )
+    ) {
+      return
+    }
+    setDeleting(true)
+    setError("")
+    try {
+      await deleteDoc(doc(db, "bugs", id))
+      navigate("/dashboard")
+    } catch (e) {
+      console.error(e)
+      setError("Could not delete issue. Check your connection and permissions.")
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   if (!id) {
     return null
   }
@@ -125,7 +149,7 @@ export default function IssueDetail() {
       <Sidebar />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-10 flex h-12 shrink-0 items-center gap-3 border-b border-zinc-200/90 bg-white px-4 dark:border-zinc-800/90 dark:bg-zinc-950 sm:px-6">
+        <header className="sticky top-0 z-10 flex min-h-12 shrink-0 flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-white px-4 py-2 dark:border-zinc-800/90 dark:bg-zinc-950 sm:gap-3 sm:px-6 sm:py-0">
           <MobileMenuButton />
           <button
             type="button"
@@ -138,31 +162,45 @@ export default function IssueDetail() {
             {loading ? "Loading…" : issue?.title ?? "Issue"}
           </h1>
           {issue && (
-            <button
-              type="button"
-              onClick={() => {
-                void (async () => {
-                  try {
-                    setCopyError(false)
-                    await navigator.clipboard.writeText(
-                      buildIssueMarkdown(issue)
-                    )
-                    setCopiedMd(true)
-                    setTimeout(() => setCopiedMd(false), 2000)
-                  } catch {
-                    setCopyError(true)
-                  }
-                })()
-              }}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-[12px] font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
-            >
-              {copiedMd ? (
-                <Check className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
-              ) : (
-                <Copy className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
-              )}
-              {copiedMd ? "Copied" : "Copy as Markdown"}
-            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  void (async () => {
+                    try {
+                      setCopyError(false)
+                      await navigator.clipboard.writeText(
+                        buildIssueMarkdown(issue)
+                      )
+                      setCopiedMd(true)
+                      setTimeout(() => setCopiedMd(false), 2000)
+                    } catch {
+                      setCopyError(true)
+                    }
+                  })()
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-[12px] font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              >
+                {copiedMd ? (
+                  <Check className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+                )}
+                {copiedMd ? "Copied" : "Copy as Markdown"}
+              </button>
+              <button
+                type="button"
+                disabled={deleting || saving}
+                onClick={() => void handleDeleteIssue()}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-2.5 py-1.5 text-[12px] font-medium text-red-700 shadow-sm transition hover:bg-red-50 disabled:opacity-50 dark:border-red-900/60 dark:bg-zinc-900 dark:text-red-400 dark:hover:bg-red-950/40"
+                aria-label="Delete issue"
+              >
+                <Trash2 className="h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden />
+                <span className="hidden sm:inline">
+                  {deleting ? "Deleting…" : "Delete"}
+                </span>
+              </button>
+            </div>
           )}
         </header>
         {copyError && (
